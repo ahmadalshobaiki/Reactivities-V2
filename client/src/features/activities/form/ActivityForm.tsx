@@ -42,6 +42,7 @@ export default function ActivityForm() {
             <Typography variant="h5" gutterBottom color="primary">
                 {activity ? 'Edit Activity' : 'Create Activity'}
             </Typography>
+            
             <Box component='form' onSubmit={handleSubmit} display='flex' flexDirection='column' gap={3}>
                 <TextField name='title' label='Title' defaultValue={activity?.title} />
                 <TextField name='description' label='Description' multiline rows={3} defaultValue={activity?.description} />
