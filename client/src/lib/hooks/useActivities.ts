@@ -1,16 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import agent from "../api/agent";
+import { useLocation } from "react-router";
 
 export const useActivities = (id?: string) => {
 
     const queryClient = useQueryClient();
+    const location = useLocation();
 
     const { data: activities, isPending } = useQuery({ // useQuery Hook from React Query instead of useState from baseline React to GET data and utilize global state mgmt. functionalities
         queryKey: ['activities'],
         queryFn: async () => {
             const response = await agent.get<Activity[]>('/activities'); // actual HTTP Client request by axios
             return response.data;
-        }
+        },
+        enabled: !id && location.pathname === '/activities'
     });
 
     const {data: activity, isLoading: isLoadingActivity} = useQuery({
