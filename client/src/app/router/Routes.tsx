@@ -12,9 +12,9 @@ import ServerError from "../../features/errors/ServerError";
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <App />, // Root route component (hostname:port)
+        element: <App />, // Root route component (hostname:port/)
         children: [
-            {path: '', element: <HomePage />}, // (hostname:port/)
+            {path: '', element: <HomePage />}, // (hostname:port/'')
             {path: 'activities', element: <ActivityDashboard />}, // (hostname:port/activities)
             {path: 'activities/:id', element: <ActivityDetailPage />},
             {path: 'createActivity', element: <ActivityForm key='create' />}, // (hostname:port/createActivity)
