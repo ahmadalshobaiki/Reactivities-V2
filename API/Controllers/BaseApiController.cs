@@ -15,7 +15,7 @@ namespace API.Controllers
         _mediator ??= HttpContext.RequestServices.GetService<IMediator>()
         ?? throw new InvalidOperationException("IMediator service is unavailable");
 
-        protected ActionResult HandleResult<T>(Result<T> result)
+        protected ActionResult HandleResult<T>(Result<T> result) // takes in a Result object of type <T> (any object) and returns an Action Result
         {
             if (!result.isSuccess && result.Code == 404) return NotFound();
 
