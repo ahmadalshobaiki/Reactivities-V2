@@ -1,3 +1,5 @@
+// effectively the domain layer in the client side. This page determines the shapes of the client side data
+
 export type Activity = {
     id: string
     title: string
@@ -14,6 +16,7 @@ export type Activity = {
     isHost: boolean
     hostId: string
     hostDisplayName: string
+    hostImageUrl: string
 }
 
 type Profile = {
@@ -21,6 +24,11 @@ type Profile = {
   displayName: string
   bio?: string
   imageUrl?: string
+}
+
+type Photo = {
+  id: string
+  url: string
 }
 
 type User = {

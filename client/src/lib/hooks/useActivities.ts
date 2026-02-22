@@ -19,10 +19,12 @@ export const useActivities = (id?: string) => {
         enabled: !id && location.pathname === '/activities' && !!currentUser,
         select: data => { // when the list of data comes back from the API, loop into it and check if the current user is the host.
             return data.map(activity => {
+                const host = activity.attendees.find(x => x.id === activity.hostId)
                 return {
                     ...activity,
                     isHost: currentUser?.id === activity.hostId,
-                    isGoing: activity.attendees.some(x => x.id === currentUser?.id)
+                    isGoing: activity.attendees.some(x => x.id === currentUser?.id),
+                    hostImageUrl: host?.imageUrl
                 }
             })
         }
@@ -36,10 +38,12 @@ export const useActivities = (id?: string) => {
         },
         enabled: !!id && !!currentUser,
         select: data => { // when the data comes back from the API, check if the current user is the host.
+            const host = data.attendees.find(x => x.id === data.hostId)
             return {
                 ...data,
                 isHost: currentUser?.id === data.hostId,
-                isGoing: data.attendees.some(x => x.id === currentUser?.id)
+                isGoing: data.attendees.some(x => x.id === currentUser?.id),
+                hostImageUrl: host?.imageUrl
             }
         }
     })
@@ -83,7 +87,7 @@ export const useActivities = (id?: string) => {
 
             await agent.post(`/activities/${id}/attend`)
         },
-        onMutate: async (activityId: string) => {
+        onMutate: async (activityId: string) => { // optimistically update attendance
             await queryClient.cancelQueries({queryKey: ['activities', activityId]}); // cancel all ongoing queries
 
             const prevActivity = queryClient.getQueryData<Activity>(['activities', activityId]) // obtain a copy of the query data from the cache
