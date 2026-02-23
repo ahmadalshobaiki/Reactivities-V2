@@ -20,6 +20,8 @@ public class Activity
     public double Latitude { get; set; }
     public double Longitude { get; set; }
 
-    // navigation properties
-    public ICollection<ActivityAttendee> Attendees { get; set; } = [];
+    // navigation properties.
+    public ICollection<ActivityAttendee> Attendees { get; set; } = []; // Cardinality: Many Activity Many Attendees
+
+    public ICollection<Comment> Comments { get; set; } = []; // Cardinality: 1 Activity Many Comments
 }
