@@ -9,7 +9,7 @@ namespace API.SignalR;
 // SignalR Hub (or a Websocket Controller). The endpoint that clients connect to and maintain a persistent connection with to enable a bi-directional communication between client and server
 public class CommentHub(IMediator mediator) : Hub 
 {
-    // function so that clients connecting to the SignalR Hub can send comments to the group
+    // function so that clients connected to the SignalR Hub can send comments to the group
     public async Task SendComment(AddComment.Command command)
     {
         var comment = await mediator.Send(command);

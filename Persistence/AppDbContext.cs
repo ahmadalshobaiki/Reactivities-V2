@@ -6,12 +6,13 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Persistence;
 
-public class    AppDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
+public class AppDbContext(DbContextOptions options) : IdentityDbContext<User>(options)
 {
     public required DbSet<Activity> Activities { get; set; }
     public required DbSet<ActivityAttendee> ActivityAttendees { get; set; }
     public required DbSet<Photo> Photos { get; set; }
     public required DbSet<Comment> Comments { get; set; }
+    public required DbSet<UserFollowing> UserFollowings { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -28,6 +29,24 @@ public class    AppDbContext(DbContextOptions options) : IdentityDbContext<User>
         .HasOne(x => x.Activity)
         .WithMany(x => x.Attendees)
         .HasForeignKey(x => x.ActivityId);
+
+        // configure the UserFollowing self-referencing Many to Many relationship table
+        builder.Entity<UserFollowing>(x =>
+        {
+            x.HasKey(k => new { k.ObserverId, k.TargetId }); // 2 Primary Keys on the new self-referencing table
+
+            // FK Relationships
+            x.HasOne(o => o.Observer) // 1 Observer (which is a User)
+                .WithMany(f => f.Followings) // Has Many Targets
+                .HasForeignKey(o => o.ObserverId) // and ObserverId is a foreign key 
+                .OnDelete(DeleteBehavior.Cascade);
+
+            x.HasOne(o => o.Target) // 1 Target (which is a User)
+                .WithMany(f => f.Followers) // Has Many Observers
+                .HasForeignKey(o => o.TargetId) // and TargetId is a foreign key
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
 
         // convert all DateTime properties of all entities into UTC Format
         var dateTimeConverter = new ValueConverter<DateTime, DateTime>(

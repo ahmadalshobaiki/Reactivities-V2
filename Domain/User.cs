@@ -11,5 +11,7 @@ public class User : IdentityUser
 
     //navigation properties
     public ICollection<ActivityAttendee> Activities { get; set; } = [];
-    public ICollection<Photo> Photos { get; set; } = []; 
+    public ICollection<Photo> Photos { get; set; } = [];
+    public ICollection<UserFollowing> Followings { get; set; } = []; // List of Targets from the Observer Point of View
+    public ICollection<UserFollowing> Followers { get; set; } = []; // List of Observers from the Target Point of View
 }
