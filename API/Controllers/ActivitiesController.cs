@@ -2,6 +2,7 @@ using System;
 using Application.Activities.Commands;
 using Application.Activities.DTO;
 using Application.Activities.Queries;
+using Application.Core;
 using Domain;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +14,12 @@ namespace API.Controllers;
 
 public class ActivitiesController() : BaseApiController
 {
+    // API Controllers parameter mapping can be from the query string, route variables, or body of the request. simple types = query string or route variables. complex objects = body. This is called Model Binding.
     [HttpGet]
-    public async Task<ActionResult<List<ActivityDTO>>> GetActivities()
+    public async Task<ActionResult<PagedList<ActivityDTO, DateTime?>>> GetActivities(
+        [FromQuery]ActivityParams activityParams) // [FromQuery] since the API controller by default will be looking this up from the body of the request to find these, but we will send this as part of the query url
     {
-        return await Mediator.Send(new GetActivityList.Query());
+        return HandleResult(await Mediator.Send(new GetActivityList.Query{Params = activityParams}));
     }
 
     [HttpGet("{id}")]
