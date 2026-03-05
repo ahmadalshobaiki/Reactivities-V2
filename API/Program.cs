@@ -4,7 +4,6 @@ using Application.Activities.Queries;
 using Application.Activities.Validators;
 using Application.Core;
 using Application.Interfaces;
-using CloudinaryDotNet;
 using Domain;
 using FluentValidation;
 using Infrastructure.Photos;
@@ -25,7 +24,7 @@ builder.Services.AddControllers(opt =>
 });
 builder.Services.AddDbContext<AppDbContext>(opt =>
 {
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 builder.Services.AddCors();
 builder.Services.AddSignalR();
@@ -69,9 +68,13 @@ app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod()
 app.UseAuthentication();
 app.UseAuthorization();
 
+app.UseDefaultFiles(); // configure the backend API to serve the static files from the wwwroot folder (The deployment model is basically the app server is serving the static files, instead of proxies such as nginx or CDNs)
+app.UseStaticFiles(); // configure the backend API to serve the static files when requested
+
 app.MapControllers();
 app.MapGroup("api").MapIdentityApi<User>(); // api/login endpoint for our app's identity system 
 app.MapHub<CommentHub>("/comments"); // endpoint for our app's SignalR Hub
+app.MapFallbackToController("Index", "Fallback"); // configure the Fallback controller
 
 using var scope = app.Services.CreateScope();
 var services = scope.ServiceProvider;

@@ -4,6 +4,7 @@ import { useLocation } from "react-router";
 import type { Activity, PagedList } from "../types";
 import { useAccount } from "./useAccount";
 import { useStore } from "./useStore";
+import type { FieldValues } from "react-hook-form";
 
 export const useActivities = (id?: string) => {
 
@@ -27,7 +28,6 @@ export const useActivities = (id?: string) => {
             }); // actual HTTP Client request by axios
             return response.data;
         },
-        staleTime: 1000 * 60 * 5, // 5 minutes staletime so react query doesnt fetch the data again for 5 min
         placeholderData: keepPreviousData,
         initialPageParam: null,
         getNextPageParam: (lastPage) => lastPage.nextCursor,
@@ -69,17 +69,17 @@ export const useActivities = (id?: string) => {
 
     const updateActivity = useMutation({ //useMutation Hook from React Query to POST data and utilize global state mgmt. functionalities
         mutationFn: async (activity: Activity) => {
-            await agent.put('/activities', activity)
+            await agent.put(`/activities/${activity.id}`, activity)
         },
         onSuccess: async () => { // Cache management. this line tells react query that the cached data for this query ID is stale now since using this mutation will update data on the server
             await queryClient.invalidateQueries({
-                queryKey: ['activities']
+                queryKey: ['activities', activity?.id]
             })
         }
     })
 
     const createActivity = useMutation({
-        mutationFn: async (activity: Activity) => {
+        mutationFn: async (activity: FieldValues) => {
             const response = await agent.post('/activities', activity);
             return response.data
         },

@@ -1,4 +1,5 @@
 // effectively the domain layer in the client side. This page determines the shapes of the client side data
+// Form schemas can be the DTOs in the client side as well
 
 type PagedList<T, TCursor> = {
   items: T[],
