@@ -25,10 +25,6 @@ export const useAccount = () => {
     const registerUser = useMutation({
         mutationFn: async (creds: RegisterSchema) => {
             await agent.post('/account/register', creds)
-        },
-        onSuccess: () => {
-            toast.success('Register Successful - you can now login');
-            navigate('/login');
         }
     })
 
@@ -40,6 +36,27 @@ export const useAccount = () => {
             queryClient.removeQueries({queryKey: ['user']});
             queryClient.removeQueries({queryKey: ['activities']})
             navigate('/');
+        }
+    })
+
+    // mutation for the client to call the /confirmEmail endpoint once the user clicks on the verification link on the email
+    const verifyEmail = useMutation({
+        mutationFn: async ({userId, code}: {userId: string, code: string}) => {
+            await agent.get(`/confirmEmail?userId=${userId}&code=${code}`)
+        }
+    });
+
+    const resendConfirmationEmail = useMutation({
+        mutationFn: async ({email, userId}: {email?: string, userId?: string | null}) => {
+            await agent.get(`/account/resendConfirmEmail`, {
+                params: {
+                    email,
+                    userId
+                }
+            })
+        },
+        onSuccess: () => {
+            toast.success('Email sent - please check your email')
         }
     })
 
@@ -57,7 +74,9 @@ export const useAccount = () => {
         registerUser,
         currentUser,
         loadingUserInfo,
-        logoutUser
+        logoutUser,
+        verifyEmail,
+        resendConfirmationEmail
     }
 
 }
