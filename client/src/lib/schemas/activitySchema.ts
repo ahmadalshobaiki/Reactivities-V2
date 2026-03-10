@@ -1,3 +1,5 @@
+// like index.d.ts types but for forms. Essentially a Dto of form data
+
 import { z } from 'zod';
 import { requiredString } from '../util/util';
 

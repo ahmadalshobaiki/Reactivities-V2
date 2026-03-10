@@ -1,11 +1,19 @@
 import { TextField, type TextFieldProps } from "@mui/material"
-import { useController, type FieldValues, type UseControllerProps } from "react-hook-form"
+import { useController, useFormContext, type FieldValues, type UseControllerProps } from "react-hook-form"
 
 type Props<T extends FieldValues> = {} & UseControllerProps<T> & TextFieldProps
 
 
-export default function TextInput<T extends FieldValues>(props: Props<T>) { // "TextInput is a TextField & it requires TextField Props"
-    const { field, fieldState } = useController({ ...props });
+export default function TextInput<T extends FieldValues>({control, ...props}: Props<T>) { // "TextInput is a TextField & it requires TextField Props"
+    const formContext = useFormContext<T>();
+    const effectiveControl = control || formContext?.control;
+
+    if (!effectiveControl){
+        throw new Error('Text input must be used within a form provider or passed as props')
+        
+    }
+    
+    const { field, fieldState } = useController({ ...props, control: effectiveControl });
 
     return (
         <TextField
